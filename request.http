@@ -1,0 +1,2 @@
+POST http://localhost:3001/orders/create-payment-intent
+user-id: 69efc0122ff9f13ea97ed587
