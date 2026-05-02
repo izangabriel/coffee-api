@@ -17,7 +17,7 @@ const app = express();
 
 //Middleware
 app.use(express.json())
-app.use(cors({ origin:"http://localhost:5173" }))
+app.use(cors({ origin:"http://localhost:5173", "https://moonlit-florentine-30453e.netlify.app"}))
 app.get("/", (req, res) => {
   res.send("Servidor funcionando correctamente");
 });
