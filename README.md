@@ -1,17 +1,21 @@
-# ☕ Café Imperium — API
+#Café Imperium — API
 
 Backend REST para la tienda de café en línea **Café Imperium**. Construido con Node.js, Express y MongoDB.
 
-## 🚀 Demo
+##Demo
 
 | | URL |
 |---|---|
 | **Frontend** | [cafe-imperium.netlify.app](https://cafe-imperium.netlify.app) |
 | **API** | [coffee-api-qas5.onrender.com](https://coffee-api-qas5.onrender.com) |
 
+> La API y la base de datos corren en planes gratuitos. Si llevan un rato inactivas, la primera petición puede tardar en responder mientras se reactivan.
+
+**Probar el pago:** los pagos usan el modo de prueba de Stripe, así que no se cobra dinero real. En el checkout puedes usar la tarjeta de prueba `4242 4242 4242 4242`, con cualquier fecha futura y cualquier CVC.
+
 ---
 
-## 🛠️ Tecnologías
+##Tecnologías
 
 - **Node.js** + **Express** — servidor y rutas REST
 - **MongoDB** + **Mongoose** — base de datos y modelos
@@ -21,21 +25,21 @@ Backend REST para la tienda de café en línea **Café Imperium**. Construido co
 
 ---
 
-## ✨ Funcionalidades
+##Funcionalidades
 
-- Autenticación de usuarios con bcrypt
-- CRUD completo de productos con imágenes en Cloudinary
+- Registro y login de usuarios, con contraseñas encriptadas con bcrypt
+- CRUD de productos con imágenes en Cloudinary
 - Carrito de compras persistente por usuario
 - Integración de pagos con Stripe (Payment Intents)
 - Gestión de órdenes con estados: pending, paid, shipped, delivered, cancelled
-- Panel de administración con endpoints protegidos
+- Endpoints de administración para órdenes (la verificación del rol todavía no se hace en el servidor, ver [Limitaciones conocidas](#️-limitaciones-conocidas))
 
 ---
 
-## 📁 Estructura del proyecto
+##Estructura del proyecto
 
 ```
-BackCoffee/
+coffee-api/
 ├── models/
 │   ├── userModel.js
 │   ├── productModel.js
@@ -50,20 +54,26 @@ BackCoffee/
 │   └── upload.js
 ├── config/
 │   └── cloudinary.js
+├── .env.example
+├── .gitignore
+├── package.json
+├── request.http
 └── server.js
 ```
 
 ---
 
-## 📌 Endpoints
+##Endpoints
+
+Las rutas de órdenes esperan un header `user-id` con el id del usuario (ver [Limitaciones conocidas](#️-limitaciones-conocidas)).
 
 ### Usuarios `/users`
 | Método | Ruta | Descripción |
 |---|---|---|
 | GET | `/users` | Obtener todos los usuarios |
 | GET | `/users/:id` | Obtener usuario por ID |
-| POST | `/users` | Crear usuario |
-| POST | `/users/login` | Login |
+| POST | `/users` | Crear usuario (siempre con rol `user`) |
+| POST | `/users/login` | Login (devuelve el usuario, sin token) |
 | PUT | `/users/:id` | Actualizar usuario |
 | DELETE | `/users/:id` | Eliminar usuario |
 
@@ -90,7 +100,7 @@ BackCoffee/
 |---|---|---|
 | POST | `/orders/create-payment-intent` | Crear intento de pago con Stripe |
 | POST | `/orders/confirm` | Confirmar orden tras pago exitoso |
-| GET | `/orders/admin` | Obtener todas las órdenes (admin) |
+| GET | `/orders/admin` | Obtener todas las órdenes (uso de administración) |
 | GET | `/orders` | Obtener órdenes del usuario |
 | GET | `/orders/:id` | Obtener orden por ID |
 | PUT | `/orders/:id/status` | Actualizar status de orden |
@@ -98,9 +108,9 @@ BackCoffee/
 
 ---
 
-## ⚙️ Variables de entorno
+##Variables de entorno
 
-Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+Copia `.env.example` a `.env` y completa los valores:
 
 ```env
 PORT=3001
@@ -113,7 +123,7 @@ CLOUDINARY_API_SECRET=...
 
 ---
 
-## 🏃 Cómo correrlo localmente
+##Cómo correrlo localmente
 
 ```bash
 # Clonar el repositorio
@@ -133,14 +143,27 @@ npm run dev
 
 ---
 
-## 🔗 Repositorio del frontend
+##Limitaciones conocidas
 
-El frontend de este proyecto está disponible en:
-[github.com/izangabriel](https://github.com/izangabriel)
+Este es un proyecto de práctica y todavía no está listo para producción:
+
+- **Autenticación sin token.** El login valida el email y la contraseña, pero no devuelve ningún token. Las rutas de órdenes identifican al usuario con un header `user-id`, un valor que controla el cliente.
+- **Rutas de administración sin verificación de rol en el servidor.** El frontend oculta el panel de administración con rutas protegidas, pero la API todavía no comprueba el rol en endpoints como `GET /orders/admin`, `PUT /orders/:id/status` o `DELETE /orders/:id`.
+- **Pagos en modo de prueba.** Stripe está configurado con claves de prueba.
+- Sin pruebas automatizadas ni límite de peticiones por cliente.
+
+**Mejora planeada:** autenticación con JWT y un middleware que exija el rol de administrador en las rutas que lo necesitan.
 
 ---
 
-## 👤 Autor
+##Repositorio del frontend
+
+El frontend de este proyecto está disponible en:
+[PEGA AQUÍ EL LINK DEL REPOSITORIO DEL FRONTEND]
+
+---
+
+##Autor
 
 **Izan Gabriel**
 - GitHub: [@izangabriel](https://github.com/izangabriel)
