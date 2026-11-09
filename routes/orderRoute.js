@@ -12,9 +12,6 @@ const getUserId = (req) => req.headers["user-id"];
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 
-// =======================
-// 💳 CREAR PAYMENT INTENT
-// =======================
 orderRouter.post("/create-payment-intent", async (req, res) => {
     try {
         const userId = getUserId(req);
@@ -42,10 +39,6 @@ orderRouter.post("/create-payment-intent", async (req, res) => {
     }
 });
 
-
-// =======================
-// ✅ CONFIRMAR ORDEN
-// =======================
 orderRouter.post("/confirm", async (req, res) => {
     try {
         const userId = getUserId(req);
@@ -93,11 +86,6 @@ orderRouter.post("/confirm", async (req, res) => {
     }
 });
 
-
-// =======================
-// 🔑 OBTENER TODAS LAS ÓRDENES (admin)
-// FIX: ANTES de /:id — si no, Express trata "admin" como un ID
-// =======================
 orderRouter.get("/admin", async (req, res) => {
     try {
         const orders = await Order.find().sort({ createdAt: -1 });
@@ -109,9 +97,6 @@ orderRouter.get("/admin", async (req, res) => {
 });
 
 
-// =======================
-// 📋 OBTENER ÓRDENES DEL USUARIO
-// =======================
 orderRouter.get("/", async (req, res) => {
     try {
         const userId = getUserId(req);
@@ -127,9 +112,6 @@ orderRouter.get("/", async (req, res) => {
 });
 
 
-// =======================
-// 🔍 OBTENER ORDEN POR ID
-// =======================
 orderRouter.get("/:id", async (req, res) => {
     try {
         const userId = getUserId(req);
@@ -150,9 +132,6 @@ orderRouter.get("/:id", async (req, res) => {
 });
 
 
-// =======================
-// 🔄 ACTUALIZAR STATUS (admin)
-// =======================
 orderRouter.put("/:id/status", async (req, res) => {
     try {
         const { id } = req.params;
@@ -177,9 +156,6 @@ orderRouter.put("/:id/status", async (req, res) => {
 });
 
 
-// =======================
-// ❌ ELIMINAR ORDEN (admin)
-// =======================
 orderRouter.delete("/:id", async (req, res) => {
     try {
         const { id } = req.params;
