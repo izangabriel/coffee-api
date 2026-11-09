@@ -21,7 +21,6 @@ const orderSchema = new mongoose.Schema({
                 type: String
             },
             price: {
-                // precio al momento de la compra (importante: no cambia si el producto cambia de precio)
                 type: Number,
                 required: true
             },
@@ -49,7 +48,6 @@ const orderSchema = new mongoose.Schema({
         default: "pending"
     },
     stripePaymentIntentId: {
-        // ID del pago en Stripe para referencia y webhooks
         type: String
     }
 }, { timestamps: true });
