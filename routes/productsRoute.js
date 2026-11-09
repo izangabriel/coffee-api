@@ -5,7 +5,6 @@ import cloudinary from "../config/cloudinary.js";
 
 const productsRouter = express.Router();
 
-// Obtener todos los productos
 productsRouter.get("/", async (req, res) => {
     try {
         const products = await Product.find();
@@ -16,7 +15,6 @@ productsRouter.get("/", async (req, res) => {
     }
 });
 
-// Obtener producto por id
 productsRouter.get("/:id", async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -32,7 +30,6 @@ productsRouter.get("/:id", async (req, res) => {
     }
 });
 
-// Crear producto
 productsRouter.post("/", upload.single("image"), async (req, res) => {
     try {
         const { name, price, description, stock, category } = req.body;
@@ -75,7 +72,6 @@ productsRouter.post("/", upload.single("image"), async (req, res) => {
     }
 });
 
-// Editar producto
 productsRouter.put("/:id", upload.single("image"), async (req, res) => {
     try {
         const { name, price, description, stock, category } = req.body;
@@ -86,9 +82,7 @@ productsRouter.put("/:id", upload.single("image"), async (req, res) => {
             return res.status(404).json({ message: "Producto no encontrado" });
         }
 
-        // Nueva imagen
         if (req.file) {
-            // borrar anterior si existe
             if (product.images[0]?.public_id) {
                 await cloudinary.uploader.destroy(product.images[0].public_id);
             }
@@ -109,7 +103,6 @@ productsRouter.put("/:id", upload.single("image"), async (req, res) => {
             }];
         }
 
-        // Actualizar campos
         if (name !== undefined) product.name = name;
         if (description !== undefined) product.description = description;
         if (price !== undefined) product.price = Number(price);
@@ -126,7 +119,6 @@ productsRouter.put("/:id", upload.single("image"), async (req, res) => {
     }
 });
 
-// Eliminar producto
 productsRouter.delete("/:id", async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -135,7 +127,6 @@ productsRouter.delete("/:id", async (req, res) => {
             return res.status(404).json({ message: "Producto no encontrado" });
         }
 
-        // eliminar imagen de cloudinary
         if (product.images[0]?.public_id) {
             await cloudinary.uploader.destroy(product.images[0].public_id);
         }
