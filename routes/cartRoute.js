@@ -4,15 +4,10 @@ import Cart from "../models/cartModel.js";
 
 const cartRouter = express.Router();
 
-// helper para obtener userId (reemplazar por middleware JWT en producción)
 const getUserId = (req) => req.headers["user-id"];
 
-// helper para validar ObjectId
 const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-/////////////////////////////////////
-// 📌 Obtener carrito (Upsert)
-/////////////////////////////////////
 cartRouter.get("/", async (req, res) => {
   try {
     const userId = getUserId(req);
@@ -25,7 +20,6 @@ cartRouter.get("/", async (req, res) => {
       return res.status(400).json({ message: "user-id inválido" });
     }
 
-    // FIX: usar populate en lugar de manual find + map
     const cart = await Cart.findOneAndUpdate(
       { user: userId },
       { $setOnInsert: { user: userId, items: [] } },
@@ -40,9 +34,6 @@ cartRouter.get("/", async (req, res) => {
   }
 });
 
-/////////////////////////////////////
-// ➕ Agregar producto
-/////////////////////////////////////
 cartRouter.post("/add", async (req, res) => {
   try {
     const userId = getUserId(req);
@@ -81,7 +72,6 @@ cartRouter.post("/add", async (req, res) => {
       await cart.save();
     }
 
-    // FIX: nueva consulta con populate en lugar de cart.populate() directo
     cart = await Cart.findById(cart._id).populate("items.product");
 
     res.json(cart);
@@ -92,10 +82,6 @@ cartRouter.post("/add", async (req, res) => {
   }
 });
 
-/////////////////////////////////////
-// 🧹 Vaciar carrito
-// FIX: debe ir ANTES de /:productId para evitar conflicto de rutas
-/////////////////////////////////////
 cartRouter.delete("/clear", async (req, res) => {
   try {
     const userId = getUserId(req);
@@ -125,9 +111,6 @@ cartRouter.delete("/clear", async (req, res) => {
   }
 });
 
-/////////////////////////////////////
-// ❌ Eliminar producto
-/////////////////////////////////////
 cartRouter.delete("/:productId", async (req, res) => {
   try {
     const userId = getUserId(req);
@@ -153,7 +136,6 @@ cartRouter.delete("/:productId", async (req, res) => {
 
     await cart.save();
 
-    // FIX: nueva consulta con populate
     cart = await Cart.findById(cart._id).populate("items.product");
 
     res.json(cart);
@@ -164,9 +146,6 @@ cartRouter.delete("/:productId", async (req, res) => {
   }
 });
 
-/////////////////////////////////////
-// 🔄 Actualizar cantidad
-/////////////////////////////////////
 cartRouter.put("/update/:productId", async (req, res) => {
   try {
     const userId = getUserId(req);
@@ -209,7 +188,6 @@ cartRouter.put("/update/:productId", async (req, res) => {
 
     await cart.save();
 
-    // FIX: nueva consulta con populate
     cart = await Cart.findById(cart._id).populate("items.product");
 
     res.json(cart);
